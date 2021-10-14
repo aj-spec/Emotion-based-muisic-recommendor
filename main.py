@@ -1,10 +1,3 @@
-'''
-PyPower Projects
-Emotion Detection Using AI
-'''
-
-#USAGE : python test.py
-
 from keras.models import load_model
 from time import sleep
 from keras.preprocessing.image import img_to_array
@@ -25,9 +18,39 @@ classifier =load_model('./Emotion_Detection.h5')
 
 class_labels = ['Angry','Happy','Neutral','Sad','Surprise']
 
+
+def open_spotify(url):
+        webbrowser.open(url, new = 2)
+def create_label(text):
+        return tk.Label(master = frm_recommendations, text = text)
+def create_button(text, url):
+        return tk.Button(master = frm_recommendations, text = text, command = lambda : open_spotify(url))
+def clear(*args):
+        args.destroy()
+def display_recommendations(response):
+        lbl_track_name = tk.Label(master = frm_recommendations, text = 'Track Name')
+        lbl_artist_name = tk.Label(master = frm_recommendations, text = 'Artist Name')
+        lbl_play_it = tk.Label(master = frm_recommendations, text = 'Play It')
+        lbl_track_name.grid(row = 0, column = 0)
+        lbl_artist_name.grid(row = 0, column = 1)
+        lbl_play_it.grid(row = 0, column = 2)
+        for idx, track in enumerate(response['tracks']):
+            lbl_track_name_recommended = create_label(track['name'])
+            lbl_track_name_recommended.grid(row = idx +1, column = 0)
+            lbl_artist_name_recommended = create_label(track['artists'][0]['name'])
+            lbl_artist_name_recommended.grid(row = idx + 1, column = 1)
+            btn_play_it_recommended = create_button('Play It', track['external_urls']['spotify'])
+            btn_play_it_recommended.grid(row = idx +1, column = 2, padx = 30)
+
+def get_recommendation():
+        search = ent_search.get()
+        sp = spotipy.Spotify(client_credentials_manager= SpotifyClientCredentials("4d4a5193b9fd430c94bc51d415e7d785", "5c561eb16dee40a991241a40f3122242"))
+        result = sp.search(q = search, limit = 1)
+        id_list = [result['tracks']['items'][0]['id']]
+        recommendations  =sp.recommendations(seed_tracks = id_list, limit = 20 )
+        display_recommendations(recommendations)
+
 cap = cv2.VideoCapture(0)
-
-
 
 while True:
     # Grab a single frame of video
@@ -54,97 +77,84 @@ while True:
             label=class_labels[preds.argmax()]
             print("\nprediction max = ",preds.argmax())
             print("\nlabel = ",label)
+            if(label=="Happy"):
+                window = tk.Tk()
+                frm_search_field  = tk.Frame(master = window, width = 100)
+                frm_recommendations = tk.Frame(master = window)
+                frm_search_field.pack()
+                frm_recommendations.pack()
+                ent_search = tk.Entry(master = frm_search_field, width = 25)
+                ent_search.insert(0, "Happy")
+                btn_get_recommendations = tk.Button(master = frm_search_field, text = 'Get recommendations', command = get_recommendation ) 
+                btn_get_recommendations.invoke()
+                ent_search.grid(row = 0,column = 0,pady =  30,padx = 30)
+                btn_get_recommendations.grid(row = 0 , column =1, pady = 30, padx = 30)
+                window.mainloop()
+            elif(label=="Neutral"):
+                window = tk.Tk()
+                frm_search_field  = tk.Frame(master = window, width = 100)
+                frm_recommendations = tk.Frame(master = window)
+                frm_search_field.pack()
+                frm_recommendations.pack()
+                ent_search = tk.Entry(master = frm_search_field, width = 25)
+                ent_search.insert(0, "Neutral")
+                btn_get_recommendations = tk.Button(master = frm_search_field, text = 'Get recommendations', command = get_recommendation ) 
+                btn_get_recommendations.invoke()
+                ent_search.grid(row = 0,column = 0,pady =  30,padx = 30)
+                btn_get_recommendations.grid(row = 0 , column =1, pady = 30, padx = 30)
+                window.mainloop()
+            elif(label=="Sad"):
+                window = tk.Tk()
+                frm_search_field  = tk.Frame(master = window, width = 100)
+                frm_recommendations = tk.Frame(master = window)
+                frm_search_field.pack()
+                frm_recommendations.pack()
+                ent_search = tk.Entry(master = frm_search_field, width = 25)
+                ent_search.insert(0, "Sad")
+                btn_get_recommendations = tk.Button(master = frm_search_field, text = 'Get recommendations', command = get_recommendation ) 
+                btn_get_recommendations.invoke()
+                ent_search.grid(row = 0,column = 0,pady =  30,padx = 30)
+                btn_get_recommendations.grid(row = 0 , column =1, pady = 30, padx = 30)
+                window.mainloop()
+            elif(label=="Surprised"):
+                window = tk.Tk()
+                frm_search_field  = tk.Frame(master = window, width = 100)
+                frm_recommendations = tk.Frame(master = window)
+                frm_search_field.pack()
+                frm_recommendations.pack()
+                ent_search = tk.Entry(master = frm_search_field, width = 25)
+                ent_search.insert(0, "Surprised")
+                btn_get_recommendations = tk.Button(master = frm_search_field, text = 'Get recommendations', command = get_recommendation ) 
+                btn_get_recommendations.invoke()
+                ent_search.grid(row = 0,column = 0,pady =  30,padx = 30)
+                btn_get_recommendations.grid(row = 0 , column =1, pady = 30, padx = 30)
+                window.mainloop()
+            else:
+                window = tk.Tk()
+                frm_search_field  = tk.Frame(master = window, width = 100)
+                frm_recommendations = tk.Frame(master = window)
+                frm_search_field.pack()
+                frm_recommendations.pack()
+                ent_search = tk.Entry(master = frm_search_field, width = 25)
+                ent_search.insert(0, "Angry")
+                btn_get_recommendations = tk.Button(master = frm_search_field, text = 'Get recommendations', command = get_recommendation ) 
+                btn_get_recommendations.invoke()
+                ent_search.grid(row = 0,column = 0,pady =  30,padx = 30)
+                btn_get_recommendations.grid(row = 0 , column =1, pady = 30, padx = 30)
+                window.mainloop()
+
+           
             label_position = (x,y)
             cv2.putText(frame,label,label_position,cv2.FONT_HERSHEY_SIMPLEX,2,(0,255,0),3)
         else:
             cv2.putText(frame,'No Face Found',(20,60),cv2.FONT_HERSHEY_SIMPLEX,2,(0,255,0),3)
         print("\n\n")
     cv2.imshow('Emotion Detector',frame)
+    
+    
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
-
-    ####################
-
-    e =["happy","neutral","sad","surprised","angry"]
-    h=n=s=su=a=0
-
-    def function():
-        for i in range(0,n):
-            if(label=="happy"):
-                h=h+1
-            elif(label=="neutral"):
-                n=n+1
-            elif(label=="sad"):
-                s=s+1
-            elif(label=="surprised"):
-                su=su+1
-            else:
-                a=a+1
-    
-    f = [h,n,s,su,a]
-    i=0
-    def sort():
-        for j in range(0,5):
-            while(i<4):
-                if(f[i]>f[i+1]):
-                    temp=f[i]
-                    f[i]=f[i+1]
-                    f[i+1]=temp
-                    temp1=e[i]
-                    e[i]=e[i+1]
-                    e[i+1]=temp
-                i=i+1
-    
-    ratio=f[4]/f[3]
-    result=round(20/(1+ratio))
-
-
-
-    ####################
-
-
-    def open_spotify(url):
-        webbrowser.open(url, new = 2)
-    def create_label(text):
-        return tk.Label(master = frm_recommendations, text = text)
-    def create_button(text, url):
-        return tk.Button(master = frm_recommendations, text = text, command = lambda : open_spotify(url))
-    def clear(*args):
-        args.destroy()
-    def display_recommendations(response):
-        lbl_track_name = tk.Label(master = frm_recommendations, text = 'Track Name')
-        lbl_artist_name = tk.Label(master = frm_recommendations, text = 'Artist Name')
-        lbl_play_it = tk.Label(master = frm_recommendations, text = 'Play It')
-        lbl_track_name.grid(row = 0, column = 0)
-        lbl_artist_name.grid(row = 0, column = 1)
-        lbl_play_it.grid(row = 0, column = 2)
-        for idx, track in enumerate(response['tracks']):
-            lbl_track_name_recommended = create_label(track['name'])
-            lbl_track_name_recommended.grid(row = idx +1, column = 0)
-            lbl_artist_name_recommended = create_label(track['artists'][0]['name'])
-            lbl_artist_name_recommended.grid(row = idx + 1, column = 1)
-            btn_play_it_recommended = create_button('Play It', track['external_urls']['spotify'])
-            btn_play_it_recommended.grid(row = idx +1, column = 2, padx = 30)
-
-    def get_recommendation():
-        search = ent_search.get()
-        sp = spotipy.Spotify(client_credentials_manager= SpotifyClientCredentials("4d4a5193b9fd430c94bc51d415e7d785", "5c561eb16dee40a991241a40f3122242"))
-        result = sp.search(q = search, limit = 1)
-        id_list = [result['tracks']['items'][0]['id']]
-        recommendations  =sp.recommendations(seed_tracks = id_list, limit = 20 )
-        display_recommendations(recommendations)
-
-window = tk.Tk()
-frm_search_field  = tk.Frame(master = window, width = 100)
-frm_recommendations = tk.Frame(master = window)
-frm_search_field.pack()
-frm_recommendations.pack()
-ent_search = tk.Entry(master = frm_search_field, width = 25)
-btn_get_recommendations = tk.Button(master = frm_search_field, text = 'Get recommendations', command = get_recommendation ) 	
-ent_search.grid(row = 0,column = 0,pady =  30,padx = 30)
-btn_get_recommendations.grid(row = 0 , column =1, pady = 30, padx = 30)
-window.mainloop()
 
 cap.release()
 cv2.destroyAllWindows()
